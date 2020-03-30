@@ -1,0 +1,158 @@
+#+TITLE: Juri's Emacs Configuration
+#+AUTHOR: Juri Paern
+#+EMAIL: juri.paern@gmail.com
+#+OPTIONS: num:nil
+
+* Use use-package
+#+BEGIN_SRC emacs-lisp
+;; bootstrap use-package
+(unless (package-installed-p 'use-package)
+  (package-refresh-contents)
+  (package-install 'use-package))
+  (require 'use-package)
+#+END_SRC
+* Config Edit/Reload
+** Edit
+#+BEGIN_SRC emacs-lisp
+(defun edit-juris-emacs-config ()
+  (interactive)
+  (find-file "~/.emacs.d/config.org"))
+(global-set-key (kbd "C-c e") 'edit-juris-emacs-config)
+#+END_SRC
+** Reload
+#+BEGIN_SRC emacs-lisp
+(defun reload-juris-emacs-config ()
+  (interactive)
+  (org-babel-load-file (expand-file-name "~/.emacs.d/config.org")))
+(global-set-key (kbd "C-c r") 'reload-juris-emacs-config)
+
+#+END_SRC
+* General Config
+** Scroll Line by Line
+#+BEGIN_SRC emacs-lisp
+(setq scroll-conservatively 100)
+#+END_SRC
+
+** Highlight current line, when switching windows
+#+BEGIN_SRC emacs-lisp
+(use-package beacon
+  :ensure t
+  :init
+  (beacon-mode 1))
+#+END_SRC 
+** Show Line and Column
+#+BEGIN_SRC emacs-lisp
+(line-number-mode 1)
+(column-number-mode 1)
+#+END_SRC
+** Highlight Current Row
+   #+BEGIN_SRC emacs-lisp
+(when window-system (global-hl-line-mode t))
+   #+END_SRC
+   ** Disable Tool Bar
+#+BEGIN_SRC 
+(tool-bar-mode -1)
+#+END_SRC
+** Inhibit Startup Message
+#+BEGIN_SRC emacs-lisp
+  (setq inhibit-startup-message t)
+#+END_SRC
+** Show Clock in Statusbar
+#+BEGIN_SRC emacs-lisp
+  (setq display-time-24hr-format t)
+  (display-time-mode 1)
+#+END_SRC
+* Evil Mode
+  #+BEGIN_SRC emacs-lisp
+(use-package evil
+  :ensure t
+  :config
+  (evil-mode 1)
+  
+  (use-package evil-leader
+    :ensure t
+    :config
+    (global-evil-leader-mode t)
+    (evil-leader/set-leader "<SPC>")
+    (evil-leader/set-key
+      "s s" 'swiper
+      "d x w" 'delete-trailing-whitespace))
+
+  (use-package evil-surround
+    :ensure t
+    :config (global-evil-surround-mode))
+
+  (use-package evil-indent-textobject
+    :ensure t)
+
+  (use-package evil-org
+    :ensure t
+    :config
+    (evil-org-set-key-theme
+	  '(textobjects insert navigation additional shift todo heading))
+    (add-hook 'org-mode-hook (lambda () (evil-org-mode))))
+
+  (use-package powerline-evil
+    :ensure t
+    :config
+    (powerline-evil-vim-color-theme)))  
+  #+END_SRC
+
+* Theme
+** Zerodark
+#+BEGIN_SRC emacs-lisp
+(use-package zerodark-theme
+  :ensure t
+  :config
+  (load-theme 'zerodark t nil)
+  (zerodark-setup-modeline-format))
+#+END_SRC
+* Auto Completion
+#+BEGIN_SRC emacs-lisp
+(use-package company
+  :ensure t
+  :init
+  (add-hook 'after-init-hook 'global-company-mode))
+#+END_SRC
+* IDO
+** Enable ido mode
+#+BEGIN_SRC emacs-lisp
+  (setq ido-enable-flex-matching nil)
+  (setq ido-create-new-buffer 'always)
+  (setq ido-everywhere t)
+  (ido-mode 1)
+#+END_SRC
+** Ido-vertical
+#+BEGIN_SRC emacs-lisp
+  (use-package ido-vertical-mode
+    :ensure t
+    :init
+    (ido-vertical-mode 1))
+  (setq ido-vertical-define-keys 'C-n-and-C-p-only)
+#+END_SRC
+** smex
+#+BEGIN_SRC emacs-lisp
+  (use-package smex
+    :ensure t
+    :init (smex-initialize)
+    :bind
+    ("M-x" . smex))
+#+END_SRC
+** Switch buffers
+#+BEGIN_SRC emacs-lisp
+  (global-set-key (kbd "C-x C-b") 'ido-switch-buffer)
+#+END_SRC
+* Flycheck
+#+BEGIN_SRC emacs-lisp
+(use-package flycheck
+  :ensure t
+  :init
+  (global-flycheck-mode t))
+#+END_SRC
+* Magit
+#+BEGIN_SRC emacs-lisp
+(use-package magit
+  :ensure t
+  :bind (("C-x g" . magit-status)))
+
+#+END_SRC
