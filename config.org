@@ -91,6 +91,15 @@
 #+BEGIN_SRC emacs-lisp
 (global-set-key (kbd "C-x b") 'ibuffer)
 #+END_SRC
+** Increase garbage collector threshold
+#+BEGIN_SRC emacs-lisp
+(setq gc-cons-threshold (eval-when-compile (* 1024 1024 128)))
+(run-with-idle-timer 2 t (lambda () (garbage-collect)))
+#+END_SRC
+** Delete trailing whitespace
+#+BEGIN_SRC emacs-lisp
+(add-hook 'before-save-hook 'delete-trailing-whitespace)
+#+END_SRC
 * Evil Mode
   #+BEGIN_SRC emacs-lisp
 (use-package evil
