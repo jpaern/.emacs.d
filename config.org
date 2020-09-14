@@ -226,3 +226,25 @@
   (add-hook 'org-mode-hook (lambda () (org-bullets-mode))))
 #+END_SRC
 
+* Haskell
+#+BEGIN_SRC emacs-lisp
+(use-package haskell-mode
+  :ensure t)
+
+(use-package flycheck-haskell
+  :ensure t
+  :config
+  (add-hook 'flycheck-mode-hook #'flycheck-haskell-setup)
+  (eval-after-load 'haskell-mode-hook 'flycheck-mode))
+
+(use-package flymake-hlint
+  :ensure t
+  :config
+  (add-hook 'haskell-mode-hook 'flymake-hlint-load))
+
+;; hindent
+(use-package hindent
+  :ensure t)
+(add-hook 'haskell-mode-hook #'hindent-mode)
+(setq hindent-style "johan-tibell")
+#+END_SRC
