@@ -186,13 +186,29 @@
   :ensure t
   :init
   (global-flycheck-mode t))
+
+; Guess language
+(use-package guess-language         ; Automatically detect language for Flyspell
+  :ensure t
+  :defer t
+  :init (add-hook 'text-mode-hook #'guess-language-mode)
+  :config
+  (setq guess-language-langcodes '((en . ("en_US" "English"))
+                                   (de . ("de_DE" "Deutsch")))
+        guess-language-languages '(en de)
+        guess-language-min-paragraph-length 45)
+  :diminish guess-language-mode)
+
 #+END_SRC
-* Magit
+* Git
 #+BEGIN_SRC emacs-lisp
 (use-package magit
   :ensure t
   :bind (("C-x g" . magit-status)))
 
+;; (use-package git-gutter
+;;     :config
+;;     (global-git-gutter-mode 't))
 #+END_SRC
 * ORG
 ** Basic Config
