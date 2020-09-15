@@ -91,6 +91,15 @@
 #+BEGIN_SRC emacs-lisp
 (global-set-key (kbd "C-x b") 'ibuffer)
 #+END_SRC
+** Increase garbage collector threshold
+#+BEGIN_SRC emacs-lisp
+(setq gc-cons-threshold (eval-when-compile (* 1024 1024 128)))
+(run-with-idle-timer 2 t (lambda () (garbage-collect)))
+#+END_SRC
+** Delete trailing whitespace
+#+BEGIN_SRC emacs-lisp
+(add-hook 'before-save-hook 'delete-trailing-whitespace)
+#+END_SRC
 * Evil Mode
   #+BEGIN_SRC emacs-lisp
 (use-package evil
@@ -177,6 +186,19 @@
   :ensure t
   :init
   (global-flycheck-mode t))
+
+; Guess language
+(use-package guess-language         ; Automatically detect language for Flyspell
+  :ensure t
+  :defer t
+  :init (add-hook 'text-mode-hook #'guess-language-mode)
+  :config
+  (setq guess-language-langcodes '((en . ("en_US" "English"))
+                                   (de . ("de_DE" "Deutsch")))
+        guess-language-languages '(en de)
+        guess-language-min-paragraph-length 45)
+  :diminish guess-language-mode)
+
 #+END_SRC
 * Magit
 #+BEGIN_SRC emacs-lisp
@@ -184,6 +206,9 @@
   :ensure t
   :bind (("C-x g" . magit-status)))
 
+;; (use-package git-gutter
+;;     :config
+;;     (global-git-gutter-mode 't))
 #+END_SRC
 * ORG
 ** Basic Config
@@ -226,22 +251,20 @@
   (require 'haskell-interactive-mode)
   (require 'autoinsert)
 )
-
-#+END_SRC
-λ> 
-* Flyspell
-#+BEGIN_SRC emacs-lisp
-(dolist (hook '(text-mode-hook))
-  (add-hook hook (lambda () (flyspell-mode 1))))
-  
-(use-package guess-language         ; Automatically detect language for Flyspell
+(use-package flycheck-haskell
   :ensure t
-  :defer t
-  :init (add-hook 'text-mode-hook #'guess-language-mode)
   :config
-  (setq guess-language-langcodes '((en . ("en_GB" "English"))
-                                   (de . ("de_DE" "German")))
-        guess-language-languages '(en de)
-        guess-language-min-paragraph-length 45)
-  :diminish guess-language-mode)
+  (add-hook 'flycheck-mode-hook #'flycheck-haskell-setup)
+  (eval-after-load 'haskell-mode-hook 'flycheck-mode))
+
+(use-package flymake-hlint
+  :ensure t
+  :config
+  (add-hook 'haskell-mode-hook 'flymake-hlint-load))
+
+;; hindent
+(use-package hindent
+  :ensure t)
+(add-hook 'haskell-mode-hook #'hindent-mode)
+(setq hindent-style "johan-tibell")
 #+END_SRC
