@@ -201,3 +201,47 @@
   (add-hook 'org-mode-hook (lambda () (org-bullets-mode))))
 #+END_SRC
 
+** Org Files
+#+BEGIN_SRC emacs-lisp
+(setq org-agenda-files (list "~/.org/privat.org"
+                             "~/.org/otto.org"))
+#+END_SRC
+* Haskell
+#+BEGIN_SRC emacs-lisp
+(use-package haskell-mode
+  :ensure t
+  :mode (("\\.hs\\'"    . haskell-mode)
+         ("\\.cabal\\'" . haskell-cabal-mode)
+         ("\\.hcr\\'"   . haskell-core-mode))
+  :interpreter ("haskell" . haskell-mode)
+
+  :init
+  (add-hook 'haskell-mode-hook 'structured-haskell-mode)
+  (add-hook 'haskell-mode-hook 'interactive-haskell-mode)
+  (add-hook 'haskell-mode-hook (lambda () (yas-minor-mode)))
+
+  :config
+  (require 'haskell)
+  (require 'haskell-mode)
+  (require 'haskell-interactive-mode)
+  (require 'autoinsert)
+)
+
+#+END_SRC
+λ> 
+* Flyspell
+#+BEGIN_SRC emacs-lisp
+(dolist (hook '(text-mode-hook))
+  (add-hook hook (lambda () (flyspell-mode 1))))
+  
+(use-package guess-language         ; Automatically detect language for Flyspell
+  :ensure t
+  :defer t
+  :init (add-hook 'text-mode-hook #'guess-language-mode)
+  :config
+  (setq guess-language-langcodes '((en . ("en_GB" "English"))
+                                   (de . ("de_DE" "German")))
+        guess-language-languages '(en de)
+        guess-language-min-paragraph-length 45)
+  :diminish guess-language-mode)
+#+END_SRC
